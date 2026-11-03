@@ -1,6 +1,7 @@
 // leaderboard.js — per-device top-N leaderboard in localStorage.
 // Falls back to an in-memory list if localStorage is unavailable.
-import { STORAGE_KEYS, LEADERBOARD_SIZE } from '../config.js';
+import { STORAGE_KEYS, LEADERBOARD_SIZE, DEFAULT_NAME } from '../config.js';
+import { sanitizeName } from './prefs.js';
 
 let memoryFallback = null; // used only if localStorage throws
 
@@ -25,14 +26,21 @@ function save(list) {
 }
 
 export function getScores() {
-  return load().sort((a, b) => b.rounds - a.rounds).slice(0, LEADERBOARD_SIZE);
+  return load()
+    .map((e) => ({ ...e, name: e.name ? sanitizeName(e.name) : DEFAULT_NAME }))
+    .sort((a, b) => b.rounds - a.rounds)
+    .slice(0, LEADERBOARD_SIZE);
 }
 
 // Records a run. Returns { rank (1-based or null), isPersonalBest }.
-export function addScore(rounds) {
+export function addScore(rounds, name) {
   const list = load();
   const prevBest = list.reduce((m, e) => Math.max(m, e.rounds), 0);
-  const entry = { rounds, date: new Date().toISOString() };
+  const entry = {
+    rounds,
+    name: sanitizeName(name),
+    date: new Date().toISOString(),
+  };
   list.push(entry);
   list.sort((a, b) => b.rounds - a.rounds);
   const trimmed = list.slice(0, LEADERBOARD_SIZE);

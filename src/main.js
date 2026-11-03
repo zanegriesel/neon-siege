@@ -3,7 +3,10 @@ import { Game } from './game.js';
 import { State } from './state.js';
 import { AudioEngine } from './audio/audio.js';
 import { getScores, addScore } from './storage/leaderboard.js';
-import { isMuted, setMuted, hasSeenTutorial, markTutorialSeen } from './storage/prefs.js';
+import {
+  isMuted, setMuted, hasSeenTutorial, markTutorialSeen,
+  getName, setName, sanitizeName,
+} from './storage/prefs.js';
 
 const canvas = document.getElementById('game');
 const overlays = {
@@ -40,6 +43,40 @@ function updateMuteLabels() {
   document.querySelectorAll('[data-mute-label]').forEach((s) => { s.textContent = label; });
 }
 
+// --- Player name --------------------------------------------------------------
+const nameInputs = document.querySelectorAll('[data-name-input]');
+
+// Current name held in memory; persisted on change and when a run starts.
+let playerName = getName();
+
+function syncNameInputs(value) {
+  nameInputs.forEach((el) => { if (el.value !== value) el.value = value; });
+}
+
+// Live-sync both inputs as the player types (without forcing cursor jumps),
+// keeping the in-memory name current. Final sanitize happens on commit.
+nameInputs.forEach((el) => {
+  el.addEventListener('input', () => {
+    playerName = el.value;
+    nameInputs.forEach((other) => { if (other !== el) other.value = el.value; });
+  });
+  // Commit (sanitize + persist + normalize both fields) when focus leaves.
+  el.addEventListener('change', commitName);
+  el.addEventListener('blur', commitName);
+});
+
+function commitName() {
+  playerName = setName(playerName);
+  syncNameInputs(playerName);
+}
+
+// Escapes untrusted text before inserting into innerHTML.
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+}
+
 function renderLeaderboard() {
   const board = document.querySelector('[data-board]');
   const empty = document.querySelector('[data-board-empty]');
@@ -57,7 +94,9 @@ function renderLeaderboard() {
     const dateStr = Number.isNaN(date.getTime())
       ? ''
       : date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const name = escapeHtml(sanitizeName(s.name));
     li.innerHTML =
+      `<span class="name">${name}</span>` +
       `<span class="rounds">${s.rounds}</span>` +
       `<span>round${s.rounds === 1 ? '' : 's'}</span>` +
       `<span class="date">${dateStr}</span>`;
@@ -67,7 +106,7 @@ function renderLeaderboard() {
 
 function showGameOver(rounds) {
   document.querySelector('[data-rounds]').textContent = rounds;
-  const result = addScore(rounds);
+  const result = addScore(rounds, playerName);
   const bestEl = document.querySelector('[data-best]');
   const rankEl = document.querySelector('[data-rank]');
   bestEl.hidden = !result.isPersonalBest;
@@ -88,6 +127,7 @@ const game = new Game(canvas, audio, {
 // Start a run, showing the tutorial first the first time this session.
 function requestStart() {
   ensureAudio();
+  commitName();
   if (!hasSeenTutorial()) {
     pendingStart = true;
     showOverlayFor(State.TUTORIAL);
@@ -127,6 +167,7 @@ document.addEventListener('click', (e) => {
       game.state = State.TUTORIAL;
       break;
     case 'tutorial-dismiss':
+      commitName();
       markTutorialSeen();
       if (pendingStart) {
         pendingStart = false;
@@ -147,16 +188,44 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Allow dismissing the tutorial with any key when it's showing.
+// Keyboard handling for overlays, aware of text-input focus.
 window.addEventListener('keydown', (e) => {
+  const typing = e.target instanceof HTMLInputElement;
+
   if (game.state === State.TUTORIAL) {
+    // While typing a name, let normal text editing happen; Enter confirms.
+    if (typing) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.target.blur();
+        commitName();
+        markTutorialSeen();
+        if (pendingStart) { pendingStart = false; game.startRun(); }
+        else { game.quitToMenu(); }
+      }
+      return;
+    }
+    // Any other key dismisses the tutorial.
     e.preventDefault();
+    commitName();
     markTutorialSeen();
     if (pendingStart) { pendingStart = false; game.startRun(); }
     else { game.quitToMenu(); }
     return;
   }
-  // Global mute toggle with M (outside active typing).
+
+  // On the menu, Enter in the name field starts a run.
+  if (typing && e.key === 'Enter') {
+    e.preventDefault();
+    e.target.blur();
+    if (game.state === State.MENU) requestStart();
+    return;
+  }
+
+  // Don't fire shortcuts (mute) while editing text.
+  if (typing) return;
+
+  // Global mute toggle with M.
   if (e.key.toLowerCase() === 'm') {
     const next = !audio.muted;
     audio.setMuted(next);
@@ -167,6 +236,7 @@ window.addEventListener('keydown', (e) => {
 
 // --- Boot -------------------------------------------------------------------
 updateMuteLabels();
+syncNameInputs(playerName);
 showOverlayFor(State.MENU);
 game.state = State.MENU;
 

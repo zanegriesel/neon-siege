@@ -119,6 +119,40 @@ html, body {
   margin: 0 auto;
 }
 
+.name-field {
+  max-width: 320px;
+  margin: 0 auto 1.1rem;
+  text-align: left;
+}
+.name-field label {
+  display: block;
+  margin: 0 0 0.45rem;
+  font-family: var(--arcade);
+  font-size: 0.56rem;
+  letter-spacing: 0.5px;
+  color: var(--amber);
+}
+.name-input {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  font-family: var(--arcade);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: rgba(54, 249, 246, 0.06);
+  border: 1px solid rgba(54, 249, 246, 0.4);
+  border-radius: 9px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.name-input::placeholder { color: rgba(244, 242, 255, 0.35); }
+.name-input:focus {
+  background: rgba(54, 249, 246, 0.12);
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px rgba(54, 249, 246, 0.35);
+}
+
 .btn {
   font-family: var(--arcade);
   font-size: 0.72rem;
@@ -209,9 +243,19 @@ html, body {
   color: var(--amber);
   min-width: 2rem;
 }
-.board li .rounds { color: var(--cyan); font-size: 0.8rem; }
-.board li .date { margin-left: auto; color: rgba(244, 242, 255, 0.5); font-size: 0.56rem; }
+.board li .name {
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 7rem;
+}
+.board li .rounds { color: var(--cyan); font-size: 0.8rem; margin-left: auto; }
+.board li .date { color: rgba(244, 242, 255, 0.5); font-size: 0.56rem; }
 .board li.top::before { color: var(--mint); }
+.board li.top .name { color: var(--mint); }
 
 .empty { color: rgba(244, 242, 255, 0.6); font-size: 0.64rem; line-height: 1.9; margin: 1.2rem 0 1.6rem; }
 

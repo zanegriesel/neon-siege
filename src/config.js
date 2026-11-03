@@ -90,6 +90,9 @@ export const STORAGE_KEYS = {
   leaderboard: 'neon-siege:leaderboard',
   mute: 'neon-siege:muted',
   tutorialSeen: 'neon-siege:tutorialSeen', // sessionStorage (per-session)
+  name: 'neon-siege:playerName',
 };
 
 export const LEADERBOARD_SIZE = 10;
+export const MAX_NAME_LENGTH = 10;
+export const DEFAULT_NAME = 'PLAYER';

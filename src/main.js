@@ -36,7 +36,7 @@ function showOverlayFor(state) {
 }
 
 function updateMuteLabels() {
-  const label = audio.muted ? 'off' : 'on';
+  const label = audio.muted ? 'Off' : 'On';
   document.querySelectorAll('[data-mute-label]').forEach((s) => { s.textContent = label; });
 }
 

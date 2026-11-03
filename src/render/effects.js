@@ -97,12 +97,12 @@ export class Effects {
         ctx.fillStyle = COLORS.danger;
         ctx.shadowColor = COLORS.danger;
         ctx.shadowBlur = 10;
-        ctx.font = 'bold 22px system-ui, sans-serif';
+        ctx.font = "16px 'Press Start 2P', monospace";
       } else {
         ctx.fillStyle = COLORS.white;
         ctx.shadowColor = 'rgba(0,0,0,0.6)';
         ctx.shadowBlur = 4;
-        ctx.font = 'bold 14px system-ui, sans-serif';
+        ctx.font = "10px 'Press Start 2P', monospace";
       }
       ctx.fillText(q.text, q.x, q.y);
     }

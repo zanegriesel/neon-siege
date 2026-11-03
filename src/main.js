@@ -169,3 +169,8 @@ window.addEventListener('keydown', (e) => {
 updateMuteLabels();
 showOverlayFor(State.MENU);
 game.state = State.MENU;
+
+// Warm up the arcade webfont so the canvas HUD never flashes a fallback face.
+if (document.fonts && document.fonts.load) {
+  document.fonts.load("16px 'Press Start 2P'").catch(() => {});
+}

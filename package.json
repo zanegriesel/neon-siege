@@ -1,0 +1,20 @@
+{
+  "name": "neon-siege",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A 2D retro top-down survival shooter that runs locally in the browser.",
+  "type": "module",
+  "scripts": {
+    "start": "node serve.mjs",
+    "serve": "node serve.mjs"
+  },
+  "keywords": [
+    "game",
+    "canvas",
+    "shooter",
+    "survival",
+    "retro",
+    "browser"
+  ],
+  "license": "MIT"
+}

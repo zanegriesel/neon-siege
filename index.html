@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Siege</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="cabinet">
+    <canvas id="game" width="960" height="540" aria-label="Neon Siege game arena"></canvas>
+
+    <!-- Overlays layered above the canvas; toggled by game state -->
+    <div id="overlays">
+
+      <!-- MAIN MENU -->
+      <section class="overlay" id="menu" hidden>
+        <h1 class="title">NEON<span>SIEGE</span></h1>
+        <p class="tagline">Hold the line. Survive the waves.</p>
+        <div class="menu-buttons">
+          <button class="btn primary" data-action="start">Start run</button>
+          <button class="btn" data-action="leaderboard">Leaderboard</button>
+          <button class="btn" data-action="tutorial">How to play</button>
+          <button class="btn ghost" data-action="mute">
+            Sound: <span data-mute-label>on</span>
+          </button>
+        </div>
+        <p class="hint">WASD move &middot; mouse aim &middot; click to shoot &middot; R reload</p>
+      </section>
+
+      <!-- TUTORIAL -->
+      <section class="overlay" id="tutorial" hidden>
+        <h2 class="panel-title">How to play</h2>
+        <ul class="tut-list">
+          <li><b class="k">W A S D</b> move your fighter around the arena</li>
+          <li><b class="k">Mouse</b> aim &mdash; your fighter always faces the cursor</li>
+          <li><b class="k">Click / hold</b> fire your gun at the enemies</li>
+          <li><b class="k">R</b> reload &mdash; the gun auto-reloads every 10 shots</li>
+          <li><b class="k">Goal</b> survive as many rounds as you can</li>
+          <li><b class="k">Danger</b> magenta rushers hit up close, amber snipers shoot from afar</li>
+          <li><b class="k">Game over</b> when your health runs out</li>
+        </ul>
+        <button class="btn primary" data-action="tutorial-dismiss">Got it &mdash; let's go</button>
+      </section>
+
+      <!-- PAUSE -->
+      <section class="overlay" id="pause" hidden>
+        <h2 class="panel-title">Paused</h2>
+        <div class="menu-buttons">
+          <button class="btn primary" data-action="resume">Resume</button>
+          <button class="btn" data-action="mute">Sound: <span data-mute-label>on</span></button>
+          <button class="btn ghost" data-action="quit">Quit to menu</button>
+        </div>
+        <p class="hint">Press Esc or P to resume</p>
+      </section>
+
+      <!-- GAME OVER -->
+      <section class="overlay" id="gameover" hidden>
+        <h2 class="panel-title danger-text">You fell</h2>
+        <p class="result">You survived <b data-rounds>0</b> rounds</p>
+        <p class="result best" data-best hidden>&#9733; New personal best! &#9733;</p>
+        <p class="result rank" data-rank hidden></p>
+        <div class="menu-buttons">
+          <button class="btn primary" data-action="start">Run again</button>
+          <button class="btn" data-action="leaderboard">Leaderboard</button>
+          <button class="btn ghost" data-action="quit">Menu</button>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section class="overlay" id="leaderboard" hidden>
+        <h2 class="panel-title">Best runs on this device</h2>
+        <ol class="board" data-board></ol>
+        <p class="empty" data-board-empty hidden>No runs yet. Start one and set the pace.</p>
+        <div class="menu-buttons">
+          <button class="btn primary" data-action="start">Start run</button>
+          <button class="btn ghost" data-action="quit">Menu</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

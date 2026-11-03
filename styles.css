@@ -59,7 +59,9 @@ html, body {
 .overlay {
   pointer-events: auto;
   width: min(92vw, 640px);
-  padding: 2.4rem 2.2rem;
+  max-height: 94vh;
+  overflow-y: auto;
+  padding: clamp(1.1rem, 3.5vh, 2.4rem) 2.2rem;
   text-align: center;
   font-family: var(--arcade);
   line-height: 1.7;
@@ -72,6 +74,16 @@ html, body {
 }
 
 .overlay[hidden] { display: none; }
+
+/* Keep the fallback scrollbar subtle and on-theme; it only appears on
+   extremely short screens where content still can't fully fit. */
+.overlay { scrollbar-width: thin; scrollbar-color: rgba(54, 249, 246, 0.4) transparent; }
+.overlay::-webkit-scrollbar { width: 8px; }
+.overlay::-webkit-scrollbar-track { background: transparent; }
+.overlay::-webkit-scrollbar-thumb {
+  background: rgba(54, 249, 246, 0.35);
+  border-radius: 8px;
+}
 
 @keyframes overlay-in {
   from { opacity: 0; transform: translateY(10px) scale(0.98); }
@@ -261,4 +273,29 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
   .overlay { animation: none; }
+}
+
+/* Short viewports: compress the taller overlays (esp. How to play) so they
+   always fit on screen without a scrollbar instead of overflowing off-screen. */
+@media (max-height: 760px) {
+  .panel-title { margin-bottom: 1rem; }
+  .tut-list { gap: 0.4rem; margin-bottom: 1rem; }
+  .tut-list li { padding: 0.45rem 0.7rem; line-height: 1.45; }
+  .tut-list .k { margin-bottom: 0.2rem; }
+  .name-field { margin-bottom: 0.9rem; }
+  .btn { padding: 0.75rem 1rem; }
+}
+
+@media (max-height: 640px) {
+  .overlay { line-height: 1.45; }
+  .panel-title { font-size: clamp(0.85rem, 2.4vw, 1.1rem); margin-bottom: 0.8rem; }
+  .tut-list { gap: 0.3rem; margin-bottom: 0.8rem; }
+  .tut-list li { padding: 0.4rem 0.6rem; font-size: 0.52rem; line-height: 1.35; }
+  .tut-list .k { font-size: 0.5rem; margin-bottom: 0.15rem; }
+  .name-field { margin-bottom: 0.7rem; }
+  .name-field label { margin-bottom: 0.3rem; }
+  .name-input { padding: 0.55rem 0.75rem; }
+  .btn { padding: 0.65rem 1rem; font-size: 0.64rem; }
+  .title { font-size: clamp(1.3rem, 4vw, 2.4rem); }
+  .tagline { margin-bottom: 1rem; }
 }
